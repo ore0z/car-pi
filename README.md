@@ -1,5 +1,5 @@
 # car-pi
-Scripts for my raspberry pi in my car. Includes dashcam and hostspot for media playback
+Scripts for my raspberry pi 3 in my car. Includes dashcam and an access point for media playback via wifi.
 
 WIP
 
