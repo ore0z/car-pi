@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Setup raspberry pi dashcam and hostspot with RTC
+# Setup raspberry pi 3 RTC and hostspot/webserver
 
 # Check for root access
 if [ $UID -ne 0 ]; then
