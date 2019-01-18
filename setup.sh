@@ -3,13 +3,15 @@
 
 # Check for root access
 if [ $UID -ne 0 ]; then
-  echo "Please run as root"
+  echo "Please run as root or sudo"
   exit 0
 fi
 
+curdir=$(pwd)
+
 # Uninstall option (./install.sh uninstall)
 if [[ $1 == "uninstall" ]]; then
-  printf "Proceed with uninstall of RTC module? [y/N] "
+  printf "Uninstall RTC module? [y/N] "
   read uninstallRTC
   if [[ ${uninstallRTC} == "y" ]]; then
     sed -i '/^dtoverlay=i2c-rtc,ds3231/d' /boot/config.txt
@@ -18,15 +20,35 @@ if [[ $1 == "uninstall" ]]; then
     apt install -y fake-hwclock
     echo "RTC uninstalled"
   fi
-  printf "Proceed with uninstall of network changes? [y/N] "
+  printf "Uninstall hotspot and network changes? [y/N] "
   read uninstallNET
   if [[ ${uninstallNET} == "y" ]]; then
     apt purge -y dnsmasq hostapd lighttpd
-    rm -rf /etc/hostapd /etc/dnsmasq.conf /etc/default/hostapd /var/www/* /video
-    echo "Hostapd, dnsmasq, lighttpd, and /video have been removed"
+    rm -rf /etc/hostapd /etc/dnsmasq.conf /etc/default/hostapd /var/www/*
+    echo "Hostapd, dnsmasq, and lighttpd have been removed"
+  fi
+  printf "Uninstall pi camera and video recording? [y/N] "
+  read unvid
+  if [[ ${unvid} == "y" ]]; then
+    kill -9 $(ps aux | grep '/[r]ecord-cam.py' | awk '{print $2}')
+    rm -rf /video
+    rm /etc/cron.d/video-cleanup
+    sed -i '/record-cam.py/d' /etc/rc.local
+    sed -i '/start_x=1/d' /boot/config.txt
+    sed -i '/gpu_mem=128/d' /boot/config.txt
+  fi
+  printf "Uninstall GPIO power control script? [y/N] "
+  read gpiopwr
+  if [[ ${gpiopwr} == "y" ]]; then
+    kill -9 $(ps aux | grep '/[p]ower-control.py' | awk '{print $2}')
+    sed -i '/power-control.py/d' /etc/rc.local
   fi
 exit 0
 fi
+
+# Setup the script watching for GPIO power off signal
+pwrfile="python ${curdir}/power-control.py &"
+sed -i "$ i\\${pwrfile}" /etc/rc.local
 
 # Setup RTC (DS3231M)
 printf "Do you have a RTC module installed? [y/N] "
@@ -57,7 +79,22 @@ if [[ ${RTCinstalled} == "y" ]]; then
 fi
 
 # Set up video recording
-mkdir -p /video
+printf "Do you want to enable and setup the pi camera? [y/N] "
+read picam
+if [[ ${picam} == "y" ]]; then
+  apt install -y libav-tools
+  mkdir -p /video/failed
+  chown -R ${SUDO_USER}:${SUDO_USER} /video
+  # Enable pi camera
+  echo "start_x=1" >> /boot/config.txt
+  echo "gpu_mem=128" >> /boot/config.txt
+  # enable script at boot
+  camfile="python ${curdir}/record-cam.py &"
+  convertfile="${curdir}/convert.sh &"
+  sed -i "$ i\\${convertfile}" /etc/rc.local
+  sed -i "$ i\\${camfile}" /etc/rc.local
+  printf "#Clean videos if disk is full\n*/5 * * * * root ${curdir}/video-cleanup.sh >/dev/null 2>&1" >> /etc/cron.d/video-cleanup
+fi
 
 # Set up hostapd for wifi access point
 printf "Would you like to setup your pi to broadcast a wifi hotspot (to download video files)? [y/N] "
@@ -111,7 +148,7 @@ EOF
     echo 'server.dir-listing = "enable"' >> /etc/lighttpd/lighttpd.conf
     /etc/init.d/lighttpd reload
     rm -rf /var/www/html/*.html # Remove default index.html page
-    ln -s /video/ /var/www/html/video # Create symlink to video files
+    [ -d /video ] && ln -s /video/ /var/www/html/video # Create symlink to video files
   fi
 fi
 
