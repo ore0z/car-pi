@@ -96,7 +96,7 @@
         url: 'cmd.php',
         data: { command:id },
         success: function(data) {
-            alert(data); // For debugging
+            //alert(data); // For debugging
         }
         });
     $modalDiv.addClass('loading');
