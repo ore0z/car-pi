@@ -23,7 +23,7 @@ if [[ $1 == "uninstall" ]]; then
   printf "Uninstall hotspot and network changes? [y/N] "
   read uninstallNET
   if [[ ${uninstallNET} == "y" ]]; then
-    apt purge -y dnsmasq hostapd lighttpd
+    apt purge -y dnsmasq hostapd lighttpd php-cgi php-cli
     rm -rf /etc/hostapd /etc/dnsmasq.conf /etc/default/hostapd /var/www/*
     echo "Hostapd, dnsmasq, and lighttpd have been removed"
   fi
@@ -144,11 +144,16 @@ EOF
     echo DAEMON_CONF="/etc/hostapd/hostapd.conf" >> /etc/default/hostapd
     echo "Done setting up wifi access point."
     echo "Setting up local web server"
-    apt install -y lighttpd
+    apt install -y lighttpd php-cgi php-cli
+    lighttpd-enable-mod fastcgi 
+    lighttpd-enable-mod fastcgi-php
     echo 'server.dir-listing = "enable"' >> /etc/lighttpd/lighttpd.conf
     /etc/init.d/lighttpd reload
     rm -rf /var/www/html/*.html # Remove default index.html page
     [ -d /video ] && ln -s /video/ /var/www/html/video # Create symlink to video files
+    # Setup sudo rights for web UI
+    cp ./conf/car-pi-sudo /etc/sudoers.d/car-pi-sudo
+    cp -rp web/* /var/www/html/
   fi
 fi
 
