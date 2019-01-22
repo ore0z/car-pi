@@ -2,13 +2,12 @@
 My current dashcam has failed me and I can't find one for a reasonable price with features I want.
 
 I decided to build one with a raspberrypi and a picamera. Added benefits of basically having a computer in my car are nice too.
-
 My biggest issue was graceful shutdown and power managment.
-
 Scripts for my raspberry pi 3 in my car. Includes dashcam and an access point for media playback via wifi.
-
 Also has a simple webUI for viewing, converting, and downloading video files from the dashcam.
 
+# Scripts
+TODO
 
 # Setup
 To setup in an automated fashion:
