@@ -51,12 +51,12 @@
           };
           if (\strpos($file, '.h264') == true){
             $convbtn = ""; // We can convert h264, enabled button
-            $viewbutn = "disabled";
+            $viewbtn = "disabled";
           };
         echo"<tr>
 	      <td style=\"width: 75%\">$file</td>
 	      <td style=\"width: 5%\">${filesize}MB</td>
-	      <td style=\"width: 5%\"><button type=\"button\" class=\"btn btn-primary oi oi-eye video-btn\" data-toggle=\"modal\" data-src=\"video/$file\" data-target=\"#vidModal\"></button></td>
+	      <td style=\"width: 5%\"><button type=\"button\" class=\"btn btn-primary oi oi-eye video-btn\" data-toggle=\"modal\" data-src=\"video/$file\" data-target=\"#vidModal\" $viewbtn></button></td>
               <td style=\"width: 5%\"><button type=\"button\" class=\"btn btn-warning oi oi-code\" $convbtn data-record-id=\"conv $file\" data-record-title=\"Convert $file to .mp4\" data-toggle=\"modal\" data-target=\"#confirm-action\"></button></td>
               <td style=\"width: 5%\"><a href=\"/video/$file\" download><button type=\"button\" class=\"btn btn-success oi oi-data-transfer-download\" download></button></a></td>
               <td style=\"width: 5%\"><button class=\"btn btn-danger oi oi-trash\" data-record-id=\"rm $file\" data-record-title=\"Delete $file\" data-toggle=\"modal\" data-target=\"#confirm-action\"></button></td>
