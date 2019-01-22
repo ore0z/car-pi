@@ -21,6 +21,7 @@
     <thead>
       <tr>
         <th>Filename</th>
+        <th>Size</th>
         <th>View</th>
         <th>Convt</th>
         <th>Save</th>
@@ -37,6 +38,8 @@
       chdir($dir);
       array_multisort(array_map('filemtime', ($files = glob("*.*"))), SORT_DESC, $files);
       foreach($files as $file){
+        $filesize = filesize($file);
+	$filesize = round($filesize / 1024 / 1024, 2);
         $viewbtn = "disabled"; // Disable buttons by default for all file typs
         $convbtn = "disabled"; // Disable convert button for all file types
           if (($file == "." || $file == "..")){
@@ -51,8 +54,9 @@
             $viewbutn = "disabled";
           };
         echo"<tr>
-              <td style=\"width: 80%\">$file</td>
-              <td style=\"width: 5%\"><a href=\"/video/$file\"><button type=\"button\" class=\"btn btn-info oi oi-eye\" $viewbtn></button></a></td>
+	      <td style=\"width: 75%\">$file</td>
+	      <td style=\"width: 5%\">${filesize}MB</td>
+	      <td style=\"width: 5%\"><button type=\"button\" class=\"btn btn-primary oi oi-eye video-btn\" data-toggle=\"modal\" data-src=\"video/$file\" data-target=\"#vidModal\"></button></td>
               <td style=\"width: 5%\"><button type=\"button\" class=\"btn btn-warning oi oi-code\" $convbtn data-record-id=\"conv $file\" data-record-title=\"Convert $file to .mp4\" data-toggle=\"modal\" data-target=\"#confirm-action\"></button></td>
               <td style=\"width: 5%\"><a href=\"/video/$file\" download><button type=\"button\" class=\"btn btn-success oi oi-data-transfer-download\" download></button></a></td>
               <td style=\"width: 5%\"><button class=\"btn btn-danger oi oi-trash\" data-record-id=\"rm $file\" data-record-title=\"Delete $file\" data-toggle=\"modal\" data-target=\"#confirm-action\"></button></td>
@@ -66,7 +70,7 @@
     </tbody>
   </table>
 
-
+<!-- Action modal -->
 <div class="modal fade" id="confirm-action" tabindex="-1" role="dialog" aria-labelledby="actionModal" aria-hidden="true">
 <div class="modal-dialog">
   <div class="modal-content">
@@ -84,6 +88,23 @@
     </div>
   </div>
 </div>
+</div>
+
+<!-- Video Modal -->
+<div class="modal fade" id="vidModal" tabindex="-1" role="dialog" aria-labelledby="Preview" aria-hidden="true">
+  <div style="width: 70%" class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+           <span aria-hidden="true">&times;</span>
+        </button>
+        <!-- 16:9 aspect ratio -->
+        <div class="embed-responsive embed-responsive-16by9">
+          <iframe class="embed-responsive-item" src="" id="video"  allowscriptaccess="always"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -110,6 +131,27 @@
     $('.title', this).text(data.recordTitle);
     $('.btn-ok', this).data('recordId', data.recordId);
   });
+</script>
+
+<script>
+  $(document).ready(function() {
+  // Gets the video src from the data-src on each button
+  var $videoSrc;
+   $('.video-btn').click(function() {
+   $videoSrc = $(this).data( "src" );
+   });
+   console.log($videoSrc);
+   // when the modal is opened autoplay it
+   $('#vidModal').on('shown.bs.modal', function (e) {
+   // set the video src to autoplay
+   $("#video").attr('src',$videoSrc + "?rel=0&amp;showinfo=0&amp;modestbranding=1&amp;autoplay=1" );
+   })
+   // stop playing video when modal closes
+   $('#vidModal').on('hide.bs.modal', function (e) {
+     // poor man's stop video
+     $("#video").attr('src',$videoSrc);
+   })
+});
 </script>
 
 </div>
