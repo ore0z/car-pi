@@ -32,6 +32,6 @@ TODO - Add links
 * DS3231 RTC Real Time Clock Module
 * DC 12V Programmable Multi-function Time Delay Relay
 * CSI to HDMI Cable Extension Module (optional but very handy)
-* A steady hand, some basic electrical knowledge and supplies (multimeter, nuts, etc) and some wire
+* A steady hand, some basic electrical knowledge and supplies (multimeter, nuts, wire, etc)
 * Add-A-Circuit Fuse TAP Adapter Fuse Holder (Also optional but makes wiring easy in the car)
  
