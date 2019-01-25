@@ -39,7 +39,7 @@
       array_multisort(array_map('filemtime', ($files = glob("*.*"))), SORT_DESC, $files);
       foreach($files as $file){
         $filesize = filesize($file);
-	$filesize = round($filesize / 1024 / 1024, 2);
+        $filesize = round($filesize / 1024 / 1024, 2);
         $viewbtn = "disabled"; // Disable buttons by default for all file typs
         $convbtn = "disabled"; // Disable convert button for all file types
           if (($file == "." || $file == "..")){
@@ -53,13 +53,13 @@
             $convbtn = ""; // We can convert h264, enabled button
             $viewbtn = "disabled";
           };
-        echo"<tr>
+        echo"<tr id=\"123\">
 	      <td style=\"width: 75%\">$file</td>
 	      <td style=\"width: 5%\">${filesize}MB</td>
 	      <td style=\"width: 5%\"><button type=\"button\" class=\"btn btn-primary oi oi-eye video-btn\" data-toggle=\"modal\" data-src=\"video/$file\" data-target=\"#vidModal\" $viewbtn></button></td>
               <td style=\"width: 5%\"><button type=\"button\" class=\"btn btn-warning oi oi-code\" $convbtn data-record-id=\"conv $file\" data-record-title=\"Convert $file to .mp4\" data-toggle=\"modal\" data-target=\"#confirm-action\"></button></td>
               <td style=\"width: 5%\"><a href=\"/video/$file\" download><button type=\"button\" class=\"btn btn-success oi oi-data-transfer-download\" download></button></a></td>
-              <td style=\"width: 5%\"><button class=\"btn btn-danger oi oi-trash\" data-record-id=\"rm $file\" data-record-title=\"Delete $file\" data-toggle=\"modal\" data-target=\"#confirm-action\"></button></td>
+              <td style=\"width: 5%\"><button class=\"btn btn-danger oi oi-trash btnDelete\" data-record-id=\"rm $file\" data-record-title=\"Delete $file\" data-toggle=\"modal\" data-target=\"#confirm-action\"></button></td>
             </tr>";
         unset($viewbtn);
         unset($covbtn);
@@ -98,7 +98,7 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
            <span aria-hidden="true">&times;</span>
         </button>
-        <!-- 16:9 aspect ratio -->
+        <!-- 16:9 Aspect Ratio -->
         <div class="embed-responsive embed-responsive-16by9">
           <iframe class="embed-responsive-item" src="" id="video"  allowscriptaccess="always"></iframe>
         </div>
@@ -107,19 +107,23 @@
   </div>
 </div>
 
+
 <script>
   // Bind click to action button in popup
   $('#confirm-action').on('click', '.btn-ok', function(e) {
     var $modalDiv = $(e.delegateTarget);
-    var id = $(this).data('recordId');
+    var $id = $(this).data('recordId');
   $.ajax({
         type: 'POST',
         url: 'cmd.php',
-        data: { command:id },
-        success: function(data) {
-            //alert(data); // For debugging
-        }
-        });
+        data: { command:$id },
+    success: function(data) {
+      //alert(data); // For debugging
+      if ( $id.includes("conv") || $id.includes("rm") ) {
+        location.reload();
+      }
+    }
+  });
     $modalDiv.addClass('loading');
     setTimeout(function() {
       $modalDiv.modal('hide').removeClass('loading');
