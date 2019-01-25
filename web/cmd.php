@@ -13,10 +13,16 @@ switch ($cmd) {
     $run = "sudo /sbin/reboot";
     break;
   case "startrec":
-    $run = "/home/pi/git/car-pi/record-cam.py &";
+    $run = "sudo systemctl start record-cam.service";
     break;
   case "stoprec":
-    $run = "sudo kill -9 $(ps aux | grep record | grep -v grep | awk '{print $2}')";
+    $run = "sudo systemctl stop record-cam.service";
+    break;
+  case "stoppwr":
+    $run = "sudo systemctl stop power-control.service";
+    break;
+  case "startpwr":
+    $run = "sudo systemctl start power-control.service";
     break;
   case "conv":
 	  $baseFile = basename($file, ".h264").PHP_EOL;

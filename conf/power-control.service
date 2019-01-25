@@ -1,0 +1,12 @@
+[Unit]
+Description=Run python script for shutdown signal from GPIO pins
+
+[Service]
+Type=simple
+User=root
+ExecStart=/usr/bin/python /home/pi/git/car-pi/power-control.py
+Restart=on-failure
+# Other Restart options: or always, on-abort, etc
+
+[Install]
+WantedBy=multi-user.target

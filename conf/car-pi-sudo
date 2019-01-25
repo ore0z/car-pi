@@ -1,1 +1,5 @@
 www-data ALL=NOPASSWD:/sbin/reboot, /bin/rm, /usr/bin/avconv
+www-data ALL=NOPASSWD:/bin/systemctl start record-cam.service
+www-data ALL=NOPASSWD:/bin/systemctl stop record-cam.service
+www-data ALL=NOPASSWD:/bin/systemctl start power-control.service
+www-data ALL=NOPASSWD:/bin/systemctl stop power-control.service

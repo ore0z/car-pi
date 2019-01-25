@@ -1,0 +1,12 @@
+[Unit]
+Description=Dashcam recording service
+
+[Service]
+Type=simple
+User=root
+ExecStart=/usr/bin/python /home/pi/git/car-pi/record-cam.py
+Restart=on-failure
+# Other Restart options: or always, on-abort, etc
+
+[Install]
+WantedBy=multi-user.target
