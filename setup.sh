@@ -33,7 +33,8 @@ if [[ $1 == "uninstall" ]]; then
     kill -9 $(ps aux | grep '/[r]ecord-cam.py' | awk '{print $2}')
     rm -rf /video
     rm /etc/cron.d/video-cleanup
-    sed -i '/record-cam.py/d' /etc/rc.local
+    systemctl disable record-cam.service
+    rm -r /etc/systemd/system/record-cam.service
     sed -i '/start_x=1/d' /boot/config.txt
     sed -i '/gpu_mem=128/d' /boot/config.txt
   fi
@@ -41,14 +42,15 @@ if [[ $1 == "uninstall" ]]; then
   read gpiopwr
   if [[ ${gpiopwr} == "y" ]]; then
     kill -9 $(ps aux | grep '/[p]ower-control.py' | awk '{print $2}')
-    sed -i '/power-control.py/d' /etc/rc.local
+    systemctl disable power-control.service
+    rm -r /etc/systemd/system/power-control.service
   fi
 exit 0
 fi
 
 # Setup the script watching for GPIO power off signal
-pwrfile="python ${curdir}/power-control.py &"
-sed -i "$ i\\${pwrfile}" /etc/rc.local
+cp conf/power-control.service /etc/systemd/system/
+systemctl enable power-control.service
 
 # Setup RTC (DS3231M)
 printf "Do you have a RTC module installed? [y/N] "
@@ -89,10 +91,10 @@ if [[ ${picam} == "y" ]]; then
   echo "start_x=1" >> /boot/config.txt
   echo "gpu_mem=128" >> /boot/config.txt
   # enable script at boot
-  camfile="python ${curdir}/record-cam.py &"
-  convertfile="${curdir}/convert.sh &"
-  sed -i "$ i\\${convertfile}" /etc/rc.local
-  sed -i "$ i\\${camfile}" /etc/rc.local
+  cp conf/record-cam.service /etc/systemd/system/record-cam.service
+  systemctl enable record-cam.service
+  cp convert.sh /usr/local/bin/convert.sh
+  sed -i "$ i\\/usr/local/bin/convert.sh &" /etc/rc.local
   printf "#Clean videos if disk is full\n*/5 * * * * root ${curdir}/video-cleanup.sh >/dev/null 2>&1" >> /etc/cron.d/video-cleanup
 fi
 

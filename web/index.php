@@ -13,6 +13,9 @@
   <h3>Video Files</h3>
   <button type="button" class="btn btn-info btn-danger" data-record-id="stoprec" data-record-title="Stop recording" data-toggle="modal" data-target="#confirm-action"><span class="oi oi-media-stop"></span> Stop Rec</button>
   <button class="btn btn-success" data-record-id="startrec" data-record-title="Start recording" data-toggle="modal" data-target="#confirm-action"><span class="oi oi-media-record"></span> Start Rec</button>
+  <button class="btn btn-danger" data-record-id="stoppwr" data-record-title="Stop Pwr Ctrl" data-toggle="modal" data-target="#confirm-action"><span class="oi oi-media-stop"></span> Stop Pwr Ctrl</button>
+  <button class="btn btn-success" data-record-id="startpwr" data-record-title="Start Pwr Ctrl" data-toggle="modal" data-target="#confirm-action"><span class="oi oi-media-play"></span> Start Pwr Ctrl</button>
+  <button class="btn btn-primary" data-record-id="h264tomp4" data-record-title="Convert All H264 Files to MP4" data-toggle="modal" data-target="#confirm-action"><span class="oi oi-code"></span> ConvertAll h264</button>
   <button class="btn btn-warning" data-record-id="reboot" data-record-title="Reboot" data-toggle="modal" data-target="#confirm-action"><span class="oi oi-power-standby"></span> Reboot</button>
   <a href="<?php header("Refresh");?>"type="button" class="btn btn-info"><span class="oi oi-reload"></span> Refresh</a>
 
@@ -118,7 +121,7 @@
         url: 'cmd.php',
         data: { command:$id },
     success: function(data) {
-      //alert(data); // For debugging
+      // alert(data); // For debugging
       if ( $id.includes("conv") || $id.includes("rm") ) {
         location.reload();
       }
