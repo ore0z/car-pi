@@ -1,5 +1,5 @@
-# Rasbperry pi "carputer" (car-pi) - WIP
-My current dashcam has failed me and I can't find one for a reasonable price with features I want.
+# Rasbperry pi "carputer" (car-pi)
+My current dashcam has failed me and I had an extra pi laying around.
 
 I decided to build one with a raspberrypi and a picamera. Added benefits of basically having a computer in my car are nice too.
 My biggest issue was graceful shutdown and power managment.
