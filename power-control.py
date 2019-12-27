@@ -11,7 +11,6 @@ pin=27 #GPIO pin, not physical pin number
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 if GPIO.input(pin) == 0: # Car has turned off before script starts so shutdown pi
-#    os.system("echo shutdown now") # testing
     os.system("shutdown -h now")
     quit()
 
@@ -42,8 +41,6 @@ while a == 1:
             a = 1
         else:
             a = 0
-            #break
 
-#os.system("echo shutdown")
 os.system("shutdown -h now")
 quit()
